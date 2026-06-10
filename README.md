@@ -253,6 +253,19 @@ The forecast showed stable sales behavior with recurring weekly fluctuations. Th
 
 ## Business Insights
 
+### Demand Planning
+Weekly seasonality was identified as the strongest driver of sales. Businesses can use these recurring patterns to improve demand forecasting and reduce forecasting errors.
+
+### Inventory Planning
+Lag-based features such as Lag 7 and Rolling Mean 7 were found to be important predictors. This suggests that previous sales behavior can be used to optimize inventory replenishment decisions.
+
+### Resource Allocation
+Since sales vary systematically across days of the week, staffing and operational resources can be allocated more efficiently based on expected demand levels.
+
+### Revenue Planning
+Accurate forecasting models such as Random Forest can support revenue estimation and budgeting by providing reliable short-term sales forecasts.
+
+### Key Findings
 1. Weekly seasonality is the strongest driver of sales.
 2. Day of Week has the highest impact on sales forecasting.
 3. Sales from the previous week are highly useful for predicting current sales.
