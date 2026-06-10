@@ -104,6 +104,8 @@ Time series decomposition was performed to break the sales series into three com
 
 Since the data showed a strong weekly pattern, decomposition was performed using a seasonal period of 7.
 
+![Decomposition Plot](images/decomposition_plot.png)
+
 ### Observation
 
 The decomposition showed a clear weekly seasonal pattern in the sales data. The trend component showed moderate fluctuations, while the residual component captured irregular movements. This confirmed that weekly seasonality plays an important role in sales behavior.
