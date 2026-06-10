@@ -64,6 +64,16 @@ The available dataset covered approximately 9.5 months of sales data (October 20
 * Scikit-learn
 * XGBoost
 * Google Colab
+  
+## Statistical Techniques Used
+
+- Time Series Decomposition
+- Augmented Dickey-Fuller (ADF) Test
+- Autocorrelation Function (ACF)
+- Partial Autocorrelation Function (PACF)
+- ARIMA Modeling
+- SARIMA Modeling
+- Forecast Error Evaluation (MAE, RMSE, MAPE)
 
 ## Project Workflow
 
@@ -87,6 +97,11 @@ The following analyses were performed:
 * Monthly sales trend
 * Distribution of daily sales
 * Boxplot for outlier detection
+ <img width="826" height="451" alt="image" src="https://github.com/user-attachments/assets/fda4447a-2efa-4d57-a84d-55f5309ba7d2" />
+ <img width="1233" height="470" alt="image" src="https://github.com/user-attachments/assets/fe8452fd-b5ea-4537-9289-40c70b2c99e0" />
+ <img width="822" height="469" alt="image" src="https://github.com/user-attachments/assets/eb4d7463-2cd4-4215-816a-593349cc0c60" />
+ <img width="644" height="470" alt="image" src="https://github.com/user-attachments/assets/1203b729-0b4b-405d-8c96-c4fd02c49c77" />
+
 
 ### Observation
 
@@ -103,6 +118,8 @@ Time series decomposition was performed to break the sales series into three com
 * Residuals
 
 Since the data showed a strong weekly pattern, decomposition was performed using a seasonal period of 7.
+<img width="630" height="470" alt="image" src="https://github.com/user-attachments/assets/15bdaf08-e672-4b70-9464-fb740e547a3a" />
+
 
 ### Observation
 
@@ -126,6 +143,8 @@ Therefore, differencing was not required, and the differencing order (d) was set
 ## 5. ACF and PACF Analysis
 
 ACF and PACF plots were used to study autocorrelation and partial autocorrelation patterns in the sales series.
+<img width="568" height="435" alt="image" src="https://github.com/user-attachments/assets/37f55fac-41fc-4dad-8dcb-43fd83b09ecb" />
+<img width="568" height="435" alt="image" src="https://github.com/user-attachments/assets/a1f46f0e-b03f-4917-a0de-abdbe6b516be" />
 
 ### Observation
 
@@ -135,6 +154,8 @@ The PACF plot also showed significant spikes around lag 7 and lag 14, suggesting
 
 ## 6. ARIMA Model
 
+ARIMA (AutoRegressive Integrated Moving Average) is a widely used statistical forecasting model that combines autoregressive and moving average components. It assumes that future observations can be explained using past observations and past forecast errors.
+
 An ARIMA model was fitted as the baseline statistical time series model.
 
 The model used was:
@@ -143,10 +164,16 @@ ARIMA(1,0,1)
 
 ### Observation
 
-The ARIMA model captured short-term dependencies in the sales data but did not explicitly model weekly seasonality. As a result, its forecasting performance was weaker compared to SARIMA and machine learning models.
+The ARIMA(1,0,1) model was fitted after confirming stationarity through the Augmented Dickey-Fuller test. The model was able to capture short-term autocorrelation present in the sales series and provided a baseline statistical forecasting framework.
+
+The forecasting performance of ARIMA was evaluated using MAE, RMSE, and MAPE. Although the model successfully captured short-term dependencies, it was unable to effectively model the strong weekly seasonal patterns present in the data. Consequently, the forecasting errors were relatively high compared to SARIMA and machine learning models.
+
+The results indicate that while ARIMA is useful for modeling non-seasonal time series behavior, additional seasonal components are required when significant periodic patterns exist in the data.
+
 
 ## 7.SARIMA Model
 
+SARIMA (Seasonal AutoRegressive Integrated Moving Average) extends ARIMA by incorporating seasonal autoregressive and moving average terms. It is particularly useful when recurring seasonal patterns are present in the time series.
 A SARIMA model was fitted to capture both non-seasonal and seasonal patterns.
 
 The model used was:
@@ -157,11 +184,17 @@ The seasonal period was taken as 7 because the data showed strong weekly seasona
 
 SARIMA was selected because the decomposition plot, ACF plot, and PACF plot all indicated strong weekly seasonality with a seasonal period of 7 days.
 
-Observation
+### Observation
 
-SARIMA performed better than ARIMA because it captured weekly seasonal patterns in the data. Its lower AIC and BIC values also indicated a better statistical fit compared to ARIMA.
+SARIMA outperformed ARIMA because it incorporated both non-seasonal and seasonal components. The seasonal period of 7 days was selected based on the weekly seasonal pattern observed in the decomposition, ACF, and PACF plots.
+
+The model was able to capture recurring weekly fluctuations more effectively than ARIMA, resulting in substantially lower forecasting errors. The lower AIC and BIC values further indicated a better model fit.
+
+The improvement in performance demonstrates the importance of accounting for seasonality in retail sales forecasting. Among the statistical forecasting approaches considered in this study, SARIMA emerged as the best-performing model.
 
 ## 8. Feature Engineering for Machine Learning
+
+Since machine learning models cannot directly understand temporal dependence, time-based features were created to capture historical sales behavior and seasonal information.
 
 To apply machine learning models to the time series data, lag-based and rolling features were created.
 
@@ -181,27 +214,64 @@ These features helped machine learning models understand recent sales behavior, 
 
 ## 9. Random Forest Regressor
 
-A Random Forest Regressor was trained using the engineered features. Random Forest was used because it can capture nonlinear relationships and interactions between variables.
+A Random Forest Regressor was trained using the engineered lag-based and calendar-based features. Random Forest is an ensemble learning technique that combines multiple decision trees and aggregates their predictions to improve accuracy and reduce overfitting.
+
+The model was trained using the following predictors:
+
+* Lag 1
+* Lag 7
+* Lag 14
+* Rolling Mean 7
+* Rolling Standard Deviation 7
+* Month
+* Day of Week
+
+These features enabled the model to learn both short-term dependencies and recurring seasonal behavior present in the sales data.
 
 ### Observation
 
-Random Forest performed very well and captured the weekly sales pattern effectively. It achieved the lowest MAE and RMSE values among all models.
+The Random Forest model successfully captured the weekly sales pattern and produced forecasts that closely followed the actual sales values. The Actual vs Predicted plot demonstrated that the model was able to track major fluctuations in sales while maintaining stable forecasting performance.
+
+The model achieved the lowest MAE and RMSE values among all forecasting approaches considered in this project, indicating the highest overall predictive accuracy.
+
+The strong performance of Random Forest highlights the effectiveness of feature engineering in time series forecasting and demonstrates how machine learning models can successfully capture nonlinear relationships within sales data.
+
+<img width="1221" height="443" alt="image" src="https://github.com/user-attachments/assets/a5d3d0f9-85b1-4110-a46e-aa7a9915b82e" />
 
 ## 10. XGBoost Regressor
 
-An XGBoost Regressor was also trained and evaluated. XGBoost is a powerful boosting algorithm often used for structured data and regression problems.
+An XGBoost Regressor was developed using the same engineered features. XGBoost is a gradient boosting algorithm that builds decision trees sequentially, where each new tree attempts to correct the prediction errors of the previous trees.
+
+The model was trained using:
+
+* Lag 1
+* Lag 7
+* Lag 14
+* Rolling Mean 7
+* Rolling Standard Deviation 7
+* Month
+* Day of Week
+
+The objective was to evaluate whether a boosting-based machine learning model could improve forecasting performance relative to Random Forest and statistical forecasting approaches.
 
 ### Observation
 
-XGBoost produced competitive results and achieved the lowest MAPE value. However, its MAE and RMSE were higher than Random Forest.
+The XGBoost model effectively captured sales fluctuations and weekly seasonal patterns. It achieved competitive forecasting performance and produced lower forecasting errors than both ARIMA and SARIMA in certain evaluation metrics.
+
+Although its MAE and RMSE values were slightly higher than those of Random Forest, it achieved the lowest MAPE value among all models. This indicates strong relative forecasting accuracy and demonstrates the capability of gradient boosting methods in retail sales forecasting.
+
+The results confirm that machine learning models can provide substantial forecasting improvements when appropriate lag and rolling-window features are incorporated.
+
 
 ## 11. Model Evaluation
 
 All models were evaluated using:
 
-* MAE: Mean Absolute Error
-* RMSE: Root Mean Squared Error
-* MAPE: Mean Absolute Percentage Error
+MAE (Mean Absolute Error) measures the average magnitude of forecasting errors.
+
+RMSE (Root Mean Squared Error) penalizes larger forecasting errors more heavily and is useful for evaluating prediction accuracy.
+
+MAPE (Mean Absolute Percentage Error) expresses forecasting error as a percentage of actual values, allowing relative comparison across models.
 
 ## Final Model Comparison
 
@@ -233,6 +303,9 @@ Feature importance analysis was performed for the Random Forest model.
 | Lag 14         |     0.0608 |
 | Month          |     0.0137 |
 
+<img width="755" height="451" alt="image" src="https://github.com/user-attachments/assets/20199f63-998b-45d4-b0fc-a3bccd051c0b" />
+
+
 ### Interpretation
 
 Day of Week was the most important feature, contributing more than 54% importance. This confirms that sales are strongly affected by weekly patterns.
@@ -243,9 +316,14 @@ Rolling Mean 7 also contributed meaningfully, indicating that recent sales trend
 
 ## 13. Forecasting
 
-The final forecasting step was performed to estimate future sales for the next 90 days.
+Forecasting is the process of predicting future observations based on historical patterns present in the data. The primary objective of forecasting is to estimate future demand and support decision-making under uncertainty.
+
+In this project, forecasting was performed using the best-performing time series model to predict future sales for the next 90 days. The forecast was generated using historical sales patterns, trend information, and weekly seasonal behavior identified during the exploratory and statistical analysis stages.
 
 A 90-day forecast was selected instead of a 12-month forecast because the available time series covered less than one full year. Forecasting too far into the future using limited historical data may reduce reliability.
+
+<img width="1214" height="451" alt="image" src="https://github.com/user-attachments/assets/4100ca31-a662-491c-b7bc-b15f080636c0" />
+
 
 ### Observation
 
@@ -283,6 +361,9 @@ The ADF test confirmed that the sales series was stationary. ACF and PACF plots 
 Among all models, Random Forest achieved the lowest MAE and RMSE values, making it the best-performing model overall. XGBoost achieved the lowest MAPE, while SARIMA was the strongest statistical model.
 
 Overall, this project demonstrates the effectiveness of combining classical statistical forecasting techniques with machine learning methods for retail sales prediction. The results show that incorporating seasonality, historical sales behavior, and engineered features can significantly improve forecasting accuracy and support better business decision-making.
+
+The consistency between decomposition results, ADF testing, ACF/PACF analysis, and model evaluation demonstrates the importance of combining statistical inference with machine learning techniques in forecasting applications.
+
 ## Future Scope
 
 This project can be further improved by:
@@ -293,29 +374,9 @@ This project can be further improved by:
 * Comparing additional models such as Prophet or LSTM
 * Building a dashboard for forecast visualization
 
-## Repository Structure
-
-```text
-Sales-Forecasting-Time-Series-ML/
-│
-├── README.md
-├── Sales_Forecasting_Project.ipynb
-├── data/
-│   ├── train.csv
-│   └── store.csv
-├── images/
-│   ├── daily_sales_plot.png
-│   ├── decomposition_plot.png
-│   ├── acf_plot.png
-│   ├── pacf_plot.png
-│   ├── model_comparison.png
-│   ├── feature_importance.png
-│   └── forecast_plot.png
-└── requirements.txt
-```
 
 ## Author
 
-Divisha Singh
-M.Sc. Statistics
+Divisha Singh |
+M.Sc. Statistics |
 University of Delhi
